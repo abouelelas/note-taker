@@ -6,7 +6,7 @@ Created an application that can be used to write, save, and delete notes. This a
 
 * The application frontend has already been created, I built the backend and connect the two.
 
-* The following HTML routes should be created:
+* The following HTML routes were created:
 
   * GET `/notes` - Should return the `notes.html` file.
 
