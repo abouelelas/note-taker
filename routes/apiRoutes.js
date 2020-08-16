@@ -1,54 +1,72 @@
-// ===============================================================================
-// LOAD DATA
-// We are linking our routes to a series of "data" sources.
-// These data sources hold arrays of information on table-data, waitinglist, etc.
-// ===============================================================================
+const fs = require('fs');
+const path = require('path');
 
-var noteData = require("../db/db.json");
+module.exports = app => {
 
+    // Setup notes variable
+    fs.readFile("db/db.json","utf8", (err, data) => {
 
+        if (err) throw err;
 
-// ===============================================================================
-// ROUTING
-// ===============================================================================
+        var notes = JSON.parse(data);
 
-module.exports = function(app) {
-  // API GET Requests
-  // Below code handles when users "visit" a page.
-  // In each of the below cases when a user visits a link
-  // (ex: localhost:PORT/api/admin... they are shown a JSON of the data in the table)
-  // ---------------------------------------------------------------------------
+        // API ROUTES
+        // ========================================================
+    
+        // Setup the /api/notes get route
+        app.get("/api/notes", function(req, res) {
+            // Read the db.json file and return all saved notes as JSON.
+            res.json(notes);
+        });
 
-  app.get("/api/notes", function(req, res) {
-    res.json(noteData);
-  });
+        // Setup the /api/notes post route
+        app.post("/api/notes", function(req, res) {
+            // Receives a new note, adds it to db.json, then returns the new note
+            let newNote = req.body;
+            notes.push(newNote);
+            updateDb();
+            return console.log("Added new note: "+newNote.title);
+        });
 
-  app.post("/api/notes", function(req, res){
-    console.log(req.body);
-    // ID needs a random number (math.random or uuid package)
-    req.body.id = 2; 
-    console.log(req.body);
-    noteData.push(req.body);
+        // Retrieves a note with specific id
+        app.get("/api/notes/:id", function(req,res) {
+            // display json for the notes array indices of the provided id
+            res.json(notes[req.params.id]);
+        });
 
-    res.json(noteData);
-  })
+        // Deletes a note with specific id
+        app.delete("/api/notes/:id", function(req, res) {
+            notes.splice(req.params.id, 1);
+            updateDb();
+            console.log("Deleted note with id "+req.params.id);
+        });
 
-// req.body - access to the new note
-// need to add an ID to the note 
-// put the new note in noteData.push -> req.body
-// make sure our new note is saved on db.json
-// the new noteData
+        // VIEW ROUTES
+        // ========================================================
 
-// newNote writing noteData to db.json
+        // Display notes.html when /notes is accessed
+        app.get('/notes', function(req,res) {
+            res.sendFile(path.join(__dirname, "../public/notes.html"));
+        });
+        
+        // Display index.html when all other routes are accessed
+        app.get('/', function(req,res) {
+            res.sendFile(path.join(__dirname, "../public/index.html"));
+        });
+        // If no matching route is found default to home
+        app.get("*", function(req, res) {
+          res.sendFile(path.join(__dirname, "../public/404.html"));
+        });
+      
 
-app.delete("/api/notes/:id", function(req, res){
-  //  below to get to the ID and reference it
-  req.params.id
-})
+        //updates the json file whenever a note is added or deleted
+        function updateDb() {
+            fs.writeFile("db/db.json",JSON.stringify(notes,'\t'),err => {
+                if (err) throw err;
+                return true;
+            });
+        }
 
+    });
 
-
-
-  
- 
-};
+}

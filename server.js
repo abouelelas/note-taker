@@ -9,11 +9,11 @@ const PORT = process.env.PORT || 3000;
 // Setup data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(__dirname + "/public"));
 
 //Require routes file
 require('./routes/apiRoutes')(app);
-require('./routes/htmlRoutes')(app);
+// require('./routes/htmlRoutes')(app);
 
 // Setup listener
 app.listen(PORT, function() {
