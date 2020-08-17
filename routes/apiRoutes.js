@@ -9,7 +9,7 @@ module.exports = app => {
 
         if (err) throw err;
 
-        var notes = JSON.parse(data);
+        var noteData = JSON.parse(data);
 
         // API ROUTES
         // ========================================================
@@ -17,7 +17,7 @@ module.exports = app => {
         // Setup the /api/notes get route
         app.get("/api/notes", function (req, res) {
             // Read the db.json file and return all saved notes as JSON.
-            res.json(notes);
+            res.json(noteData);
         });
 
         // Setup the /api/notes post route
@@ -27,22 +27,26 @@ module.exports = app => {
             let newNote = req.body;
             newNote.id = uuidv4();
             console.log(newNote);
-            notes.push(newNote);
+            noteData.push(newNote);
             updateDb();
-            return console.log("Added new note: " + newNote.title);
+            res.json(newNote);
         });
 
         // Retrieves a note with specific id
         app.get("/api/notes/:id", function (req, res) {
             // display json for the notes array indices of the provided id
-            res.json(notes[req.params.id]);
+            res.json(noteData[req.params.id]);
         });
 
         // Deletes a note with specific id
         app.delete("/api/notes/:id", function (req, res) {
-            // notes.filter(req.params.id, 1);
+            let deleteNote = req.params.id;
+            noteData = noteData.filter(function(note){
+                return note.id != deleteNote;
+            });
             updateDb();
             console.log("Deleted note with id " + req.params.id);
+            res.json(true);
         });
 
         // VIEW ROUTES
@@ -65,7 +69,7 @@ module.exports = app => {
 
         //updates the json file whenever a note is added or deleted
         function updateDb() {
-            fs.writeFile("db/db.json", JSON.stringify(notes, '\t'), err => {
+            fs.writeFile("db/db.json", JSON.stringify(noteData, '\t'), err => {
                 if (err) throw err;
                 return true;
             });
