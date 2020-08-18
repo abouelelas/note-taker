@@ -26,7 +26,7 @@ I created an application that can be used to write, save, and delete notes. This
 The app wsa successfully deployed to the local server and to Heroku.
 - - -
 
-(GitHub Link- note-taker)[https://github.com/abouelelas/note-taker]
-(Heroku Link- note-taker)[https://peaceful-castle-23554.herokuapp.com/notes.html]
+* (GitHub Link- note-taker)[https://github.com/abouelelas/note-taker]
+* (Heroku Link- note-taker)[https://peaceful-castle-23554.herokuapp.com/notes.html]
 
-[Screenshot](https://github.com/abouelelas/note-taker/blob/master/public/assets/Notetaker-ss.png)
+* [Screenshot](https://github.com/abouelelas/note-taker/blob/master/public/assets/Notetaker-ss.png)
